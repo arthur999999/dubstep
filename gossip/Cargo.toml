@@ -13,3 +13,4 @@ lru = { workspace = true }
 rand = { workspace = true }
 serde = { workspace = true }
 thiserror = { workspace = true }
+solana-version = { workspace = true }

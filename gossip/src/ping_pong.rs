@@ -260,4 +260,18 @@ mod tests {
 
         assert!(result.is_ok(), "{}", result.unwrap_err());
     }
+
+    #[test]
+    fn test_create_pong() {
+        let keypair = Keypair::new();
+        let ping = Ping::rand(&keypair).expect("Failed to create ping");
+
+        let expected_hash = hash::hashv(&[PING_PONG_HASH_PREFIX, &ping.token]);
+        let pong = Pong::new(&ping, &keypair).expect("Failed to create pong");
+
+        assert_eq!(
+            pong.hash, expected_hash,
+            "The pong hash does not match the expected hash"
+        );
+    }
 }
