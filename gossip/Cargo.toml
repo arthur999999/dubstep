@@ -14,3 +14,4 @@ rand = { workspace = true }
 serde = { workspace = true }
 thiserror = { workspace = true }
 solana-version = { workspace = true }
+bv = { workspace = true }

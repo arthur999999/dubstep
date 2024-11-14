@@ -592,6 +592,7 @@ name = "dubstep-gossip"
 version = "0.1.0"
 dependencies = [
  "bincode",
+ "bv",
  "dotenv",
  "lru",
  "rand 0.8.5",

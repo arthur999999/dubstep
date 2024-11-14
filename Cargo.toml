@@ -13,6 +13,7 @@ rand = "0.8.5"
 serde = "1.0.210"
 thiserror = "1.0.64"
 solana-version = "2.0.13"
+bv = "0.11.1"
 
 [workspace]
 members = [
