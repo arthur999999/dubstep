@@ -27,6 +27,8 @@ To run Dubstep, ensure you have:
 
 ### Running Tests
 
+!!!You need set the env file to run the tests
+
 Run tests to validate the functionality:
 
 ```bash
