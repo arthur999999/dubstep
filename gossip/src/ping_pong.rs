@@ -12,8 +12,11 @@ use {
     std::{
         net::SocketAddr,
         num::NonZero,
+        sync::Arc,
         time::{Duration, Instant},
     },
+    thiserror::Error,
+    tokio::sync::mpsc::Sender,
 };
 
 const GOSSIP_PING_TOKEN_SIZE: usize = 32;
@@ -50,10 +53,26 @@ impl Ping {
 
         Self::new(random_bytes, keypair)
     }
+
+    pub async fn process(
+        ping: Self,
+        from: SocketAddr,
+        tx_out: Sender<(Vec<u8>, SocketAddr)>,
+        keypair: Arc<Keypair>,
+    ) -> Result<(), PingPongErros> {
+        let pong = match Pong::new(&ping, &keypair) {
+            Ok(p) => p,
+            Err(_) => return Err(PingPongErros::FailedToCreatePong),
+        };
+
+        pong.send(from, tx_out).await?;
+
+        Ok(())
+    }
 }
 
 impl Pong {
-    pub fn new<T: Serialize>(ping: &Ping, keypair: &Keypair) -> Result<Self, Error> {
+    pub fn new(ping: &Ping, keypair: &Keypair) -> Result<Self, Error> {
         let token = serialize(&ping.token)?;
         let hash = hash::hashv(&[PING_PONG_HASH_PREFIX, &token]);
         let pong = Pong {
@@ -67,6 +86,32 @@ impl Pong {
     pub fn from(&self) -> &Pubkey {
         &self.from
     }
+
+    async fn send(
+        &self,
+        addr: SocketAddr,
+        tx_out: Sender<(Vec<u8>, SocketAddr)>,
+    ) -> Result<(), PingPongErros> {
+        let message = match serialize(self) {
+            Ok(m) => m,
+            Err(_) => return Err(PingPongErros::FailedToSerealizePong),
+        };
+
+        match tx_out.send((message, addr)).await {
+            Ok(_) => return Ok(()),
+            Err(_) => return Err(PingPongErros::FailedToSendAPong),
+        };
+    }
+}
+
+#[derive(Debug, Error)]
+pub enum PingPongErros {
+    #[error("Failed to create pong to reply a ping")]
+    FailedToCreatePong,
+    #[error("Failed to serealize pong")]
+    FailedToSerealizePong,
+    #[error("Failed to send apong")]
+    FailedToSendAPong,
 }
 
 pub struct PingCache {

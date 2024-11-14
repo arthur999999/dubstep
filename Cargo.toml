@@ -11,6 +11,7 @@ bincode = "1.3.3"
 lru = "0.12.5"
 rand = "0.8.5"
 serde = "1.0.210"
+thiserror = "1.0.64"
 
 [workspace]
 members = [

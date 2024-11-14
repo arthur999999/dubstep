@@ -12,3 +12,4 @@ bincode = { workspace = true }
 lru = { workspace = true }
 rand = { workspace = true }
 serde = { workspace = true }
+thiserror = { workspace = true }
