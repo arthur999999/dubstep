@@ -592,11 +592,15 @@ name = "dubstep-gossip"
 version = "0.1.0"
 dependencies = [
  "bincode",
+ "bv",
  "dotenv",
  "lru",
  "rand 0.8.5",
  "serde",
+ "solana-bloom",
  "solana-sdk",
+ "solana-version",
+ "thiserror",
  "tokio",
 ]
 
@@ -1451,6 +1455,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "solana-bloom"
+version = "2.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a6cdcc35537b23cd3376eb2ea7753d958f6ce64f69318b00dc137817c0b49411"
+dependencies = [
+ "bv",
+ "fnv",
+ "log",
+ "rand 0.8.5",
+ "serde",
+ "serde_derive",
+ "solana-sanitize",
+ "solana-sdk",
+]
+
+[[package]]
 name = "solana-bn254"
 version = "2.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2011,6 +2031,20 @@ dependencies = [
  "serde_derive",
  "solana-instruction",
  "solana-sanitize",
+]
+
+[[package]]
+name = "solana-version"
+version = "2.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7310708b642fb83c04f44934509f4f149ffd69d0cd4cf76d9645c991177d7ea0"
+dependencies = [
+ "semver",
+ "serde",
+ "serde_derive",
+ "solana-feature-set",
+ "solana-sanitize",
+ "solana-serde-varint",
 ]
 
 [[package]]
