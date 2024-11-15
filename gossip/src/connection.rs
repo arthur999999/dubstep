@@ -67,25 +67,3 @@ impl Connection {
         });
     }
 }
-
-#[cfg(test)]
-pub fn get_env_vars() -> (String, String, String, String) {
-    use std::env;
-
-    use dotenv::dotenv;
-
-    dotenv().ok();
-
-    let udp_socket =
-        env::var("UDP_SOCKET_TEST").expect("Failed to get UDP_SOCKET_TEST in .env file");
-
-    let enrty_point =
-        env::var("ENTRY_POINT_TEST").expect("Failed to get ENTRY_POINT_TEST in .env file");
-
-    let gossip_socket_addr = env::var("GOSSIP_SOCKET_ADDR_TEST")
-        .expect("Failed to get GOSSIP_SOCKET_ADDR_TEST in .env file");
-
-    let peer_node = env::var("PEER_NODE_TEST").expect("Failed to get PEER_NODE_TEST in .env file");
-
-    (udp_socket, enrty_point, gossip_socket_addr, peer_node)
-}

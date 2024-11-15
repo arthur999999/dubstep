@@ -16,7 +16,6 @@ pub async fn process_message(connection: Arc<Connection>, keypair: Keypair) {
             let protocol: Result<Protocol, _> = deserialize(&message);
             match protocol {
                 Ok(protocol) => match protocol {
-                    Protocol::PullRequest => (),
                     Protocol::PullResponse => (),
                     Protocol::PushMessage => (),
                     Protocol::PruneMessage => (),
@@ -30,6 +29,7 @@ pub async fn process_message(connection: Arc<Connection>, keypair: Keypair) {
                         .await;
                     }
                     Protocol::PongMessage(pong) => todo!(),
+                    _ => (),
                 },
                 Err(_) => (),
             }

@@ -198,66 +198,19 @@ impl PingCache {
 
 #[cfg(test)]
 mod tests {
-    use {
-        super::*,
-        crate::{
-            connection::{get_env_vars, Connection},
-            protocol::Protocol,
-        },
-        bincode::deserialize,
-        tokio::{self, time::timeout},
-    };
+    use super::*;
 
-    #[tokio::test]
-    async fn test_send_ping() {
-        //if you are using the mainnet or testnet maybe the test will fail
-        //only because the entry point dont respond,
-        //if the test fail you should try again some times to ensure the test really is working or just use the devnet
-        let (udp, entry_point, _, _) = get_env_vars();
-        let connection = Connection::new(&udp)
-            .await
-            .expect("Failed to create connection");
-
-        let solana_entrypoint: SocketAddr = entry_point
-            .parse()
-            .expect("Failed create entrypoint socket");
-
-        connection.start_sending();
-        connection.start_receiving();
-
+    #[test]
+    fn test_create_pong() {
         let keypair = Keypair::new();
         let ping = Ping::rand(&keypair).expect("Failed to create ping");
 
-        let message = serialize(&Protocol::PingMessage(ping)).expect("Failed to serealize ping");
+        let expected_hash = hash::hashv(&[PING_PONG_HASH_PREFIX, &ping.token]);
+        let pong = Pong::new(&ping, &keypair).expect("Failed to create pong");
 
-        if let Err(e) = connection.tx_out.send((message, solana_entrypoint)).await {
-            panic!("Failed to send message: {:?}", e);
-        }
-
-        let result = timeout(Duration::from_secs(10), async {
-            loop {
-                let msg_opt = {
-                    let mut listen_channel = connection.rx_in.lock().await;
-                    listen_channel.recv().await
-                };
-                if let Some((msg, from)) = msg_opt {
-                    if from == solana_entrypoint {
-                        let protocol: Protocol =
-                            deserialize(&msg).expect("Failed to deserialize message");
-                        match protocol {
-                            Protocol::PongMessage(_pong) => {
-                                return Ok(());
-                            }
-                            _ => {
-                                return Err("Received a message that is not a Pong");
-                            }
-                        }
-                    }
-                }
-            }
-        })
-        .await;
-
-        assert!(result.is_ok(), "{}", result.unwrap_err());
+        assert_eq!(
+            pong.hash, expected_hash,
+            "The pong hash does not match the expected hash"
+        );
     }
 }
