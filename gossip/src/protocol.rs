@@ -1,11 +1,14 @@
 use {
-    crate::ping_pong::{Ping, Pong},
+    crate::{
+        gossip_data::{filter::DataFilter, gossip_data::GossipValue},
+        ping_pong::{Ping, Pong},
+    },
     serde::{Deserialize, Serialize},
 };
 
 #[derive(Debug, Deserialize, Serialize)]
 pub enum Protocol {
-    PullRequest,
+    PullRequest(DataFilter, GossipValue),
     PullResponse,
     PushMessage,
     PruneMessage,

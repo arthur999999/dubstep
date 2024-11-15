@@ -1,6 +1,6 @@
 use {
     serde::{Deserialize, Serialize},
-    solana_sdk::pubkey::Pubkey,
+    solana_sdk::{pubkey::Pubkey, timing::timestamp},
     std::{
         net::{IpAddr, Ipv4Addr, SocketAddr},
         time::{SystemTime, UNIX_EPOCH},
@@ -24,16 +24,6 @@ pub struct ContactInfo {
     cache: [SocketAddr; SOCKET_CACHE_SIZE],
 }
 
-impl ContactInfo {
-    pub fn pubkey(&self) -> &Pubkey {
-        &self.pubkey
-    }
-
-    pub fn sockets(&self) -> &Vec<SocketEntry> {
-        &self.sockets
-    }
-}
-
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 enum Extension {}
 
@@ -44,7 +34,7 @@ pub struct SocketEntry {
     offset: u16,
 }
 
-fn get_timestamp() -> u64 {
+fn get_ouset() -> u64 {
     let now = SystemTime::now();
     let elapsed = now.duration_since(UNIX_EPOCH).unwrap();
     u64::try_from(elapsed.as_micros()).unwrap()
@@ -65,11 +55,33 @@ impl ContactInfo {
         Self {
             pubkey,
             wallclock,
-            outset: get_timestamp(),
+            outset: get_ouset(),
             shred_version,
             version: solana_version::Version::default(),
             addrs: Vec::<IpAddr>::default(),
             sockets: vec_socket,
+            extensions: Vec::<Extension>::default(),
+            cache: [SOCKET_ADDR_UNSPECIFIED; SOCKET_CACHE_SIZE],
+        }
+    }
+
+    pub fn pubkey(&self) -> &Pubkey {
+        &self.pubkey
+    }
+
+    pub fn sockets(&self) -> &Vec<SocketEntry> {
+        &self.sockets
+    }
+
+    pub fn default() -> Self {
+        Self {
+            pubkey: Pubkey::new_unique(),
+            wallclock: timestamp(),
+            outset: get_ouset(),
+            shred_version: 0,
+            version: solana_version::Version::default(),
+            addrs: Vec::<IpAddr>::default(),
+            sockets: vec![],
             extensions: Vec::<Extension>::default(),
             cache: [SOCKET_ADDR_UNSPECIFIED; SOCKET_CACHE_SIZE],
         }

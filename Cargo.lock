@@ -597,6 +597,7 @@ dependencies = [
  "lru",
  "rand 0.8.5",
  "serde",
+ "solana-bloom",
  "solana-sdk",
  "solana-version",
  "thiserror",
@@ -1451,6 +1452,22 @@ dependencies = [
  "bincode",
  "serde",
  "solana-instruction",
+]
+
+[[package]]
+name = "solana-bloom"
+version = "2.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a6cdcc35537b23cd3376eb2ea7753d958f6ce64f69318b00dc137817c0b49411"
+dependencies = [
+ "bv",
+ "fnv",
+ "log",
+ "rand 0.8.5",
+ "serde",
+ "serde_derive",
+ "solana-sanitize",
+ "solana-sdk",
 ]
 
 [[package]]

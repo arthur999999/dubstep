@@ -1,13 +1,22 @@
 use {
-    super::contact_info::ContactInfo,
+    super::{contact_info::ContactInfo, legacy_contact_info::LegacyContactInfo},
+    bincode::serialize,
     bv::BitVec,
     serde::{Deserialize, Serialize},
-    solana_sdk::{clock::Slot, hash::Hash, pubkey::Pubkey, transaction::Transaction},
-    std::collections::BTreeSet,
+    solana_sdk::{
+        clock::Slot,
+        hash::Hash,
+        pubkey::Pubkey,
+        signature::{Keypair, Signable, Signature},
+        transaction::Transaction,
+    },
+    std::{
+        borrow::{Borrow, Cow},
+        collections::BTreeSet,
+    },
 };
 
-use super::legacy_contact_info::LegacyContactInfo;
-
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum GossipData {
     LegacyContactInfo(LegacyContactInfo),
     Vote(VoteIndex, Vote),
@@ -23,6 +32,69 @@ pub enum GossipData {
     ContactInfo(ContactInfo),
     RestartLastVotedForkSlots(RestartLastVotedForkSlots),
     RestartHeaviestFork(RestartHeaviestFork),
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct GossipValue {
+    pub signature: Signature,
+    pub data: GossipData,
+}
+
+impl GossipValue {
+    fn new_unsigned(data: GossipData) -> Self {
+        Self {
+            signature: Signature::default(),
+            data,
+        }
+    }
+
+    pub fn new_signed(data: GossipData, keypair: &Keypair) -> Self {
+        let mut value = Self::new_unsigned(data);
+        value.sign(keypair);
+        value
+    }
+
+    pub fn pubkey(&self) -> Pubkey {
+        match &self.data {
+            GossipData::LegacyContactInfo(contact_info) => *contact_info.pubkey(),
+            GossipData::Vote(_, vote) => vote.from,
+            GossipData::LowestSlot(_, slots) => slots.from,
+            GossipData::LegacySnapshotHashes(hash) => hash.from,
+            GossipData::AccountsHashes(hash) => hash.from,
+            GossipData::EpochSlots(_, p) => p.from,
+            GossipData::LegacyVersion(version) => version.from,
+            GossipData::Version(version) => version.from,
+            GossipData::NodeInstance(node) => node.from,
+            GossipData::DuplicateShred(_, shred) => shred.from,
+            GossipData::SnapshotHashes(hash) => hash.from,
+            GossipData::ContactInfo(node) => *node.pubkey(),
+            GossipData::RestartLastVotedForkSlots(slots) => slots.from,
+            GossipData::RestartHeaviestFork(fork) => fork.from,
+        }
+    }
+}
+
+impl Signable for GossipValue {
+    fn pubkey(&self) -> Pubkey {
+        self.pubkey()
+    }
+
+    fn signable_data(&self) -> Cow<[u8]> {
+        Cow::Owned(serialize(&self.data).expect("failed to serialize CrdsData"))
+    }
+
+    fn get_signature(&self) -> Signature {
+        self.signature
+    }
+
+    fn set_signature(&mut self, signature: Signature) {
+        self.signature = signature
+    }
+
+    fn verify(&self) -> bool {
+        self.get_signature()
+            .verify(self.pubkey().as_ref(), self.signable_data().borrow())
+    }
 }
 
 type VoteIndex = u8;
