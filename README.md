@@ -28,7 +28,7 @@ To run Dubstep, ensure you have:
 │  │   ├── lib.rs             
 │  │   └── ...                 # Others modules
 │  ├── tests/                  # Contains integration test files
-│  └── Cargo.toml
+│  └── Cargo.toml              # Crate dependecies and metadata
 └── Cargo.toml                 # Workspace dependencies and metadata
 ```
 
