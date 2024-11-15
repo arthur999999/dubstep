@@ -21,9 +21,16 @@ To run Dubstep, ensure you have:
 ## Development
 
 ### Project Structure
-
-- **src/**: Contains the main Rust source files, including network connection and gossip handling.
-- **Cargo.toml**: Project dependencies and metadata.
+```bash
+-dubstep/                      # The workspace
+├── gossip/                    # The crate
+|  ├── src/                    # Contains code and unit tests
+|  │   ├── lib.rs             
+|  │   └── ...                 # Others modules
+|  ├── tests/                  # Contains integration test files
+|  └── Cargo.toml
+└── Cargo.toml                 # Workspace dependencies and metadata
+```
 
 ### Running Tests
 
