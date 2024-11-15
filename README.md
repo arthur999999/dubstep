@@ -24,11 +24,11 @@ To run Dubstep, ensure you have:
 ```bash
 -dubstep/                      # The workspace
 ├── gossip/                    # The crate
-|  ├── src/                    # Contains code and unit tests
-|  │   ├── lib.rs             
-|  │   └── ...                 # Others modules
-|  ├── tests/                  # Contains integration test files
-|  └── Cargo.toml
+│  ├── src/                    # Contains code and unit tests
+│  │   ├── lib.rs             
+│  │   └── ...                 # Others modules
+│  ├── tests/                  # Contains integration test files
+│  └── Cargo.toml
 └── Cargo.toml                 # Workspace dependencies and metadata
 ```
 
