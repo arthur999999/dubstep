@@ -9,6 +9,36 @@
 - Lightweight and optimized for simple deployment as a spy node.
 - Built with flexibility to be integrated with other Solana monitoring or analysis tools.
 
+## TODO
+
+This project aims to implement a Solana-inspired gossip protocol to act like a spy node. Below are key features and tasks:
+
+### Core Functionality
+- [ ] **Create Connections**  
+  Establish secure and reliable connections between nodes. Include peer discovery and management.
+
+- [ ] **Implement Ping-Pong Mechanism**  
+  Implement the `Ping` and `Pong` message exchange to check the liveness of nodes and maintain active connections.
+
+- [ ] **Implement PullRequest**  
+  Allow nodes to exchange information about each other's states and connected peers. This includes implementing `PullRequest` to request information.
+
+### Testing and Validation
+- [ ] **Unit Tests**  
+  Write unit tests for each protocol message (Ping, Pong, PullRequest, etc.) to ensure correct functionality.
+
+- [ ] **Integration Tests**  
+  Create integration tests to simulate interactions between multiple nodes, testing the full gossip protocol under various network conditions.
+
+
+### Documentation
+- [ ] **Detailed Documentation of Each Protocol Step**  
+  Document each part of the protocol, with usage examples and diagrams if necessary, to help others understand the implementation.
+
+- [ ] **Add Usage Examples**  
+  Add example scripts or code snippets that demonstrate how to use each protocol feature in a real-world scenario.
+
+
 ## Getting Started
 
 ### Prerequisites
