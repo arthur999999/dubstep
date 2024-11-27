@@ -35,7 +35,7 @@ impl Default for DataFilter {
         }
 
         let max_items: u32 = 1287;
-        let num_items: u32 = 0;
+        let num_items: u32 = 1;
         let false_rate: f64 = 0.1f64;
         let max_bits = MASK_BITS;
         let mask_bits = mask_bits(f64::from(num_items), f64::from(max_items));
